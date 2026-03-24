@@ -1,0 +1,165 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>PDF Editor - Merge & Split</title>
+    <link rel="stylesheet" href="style.css?v=2">
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;600;800&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+</head>
+<body>
+    <canvas id="bg-canvas"></canvas>
+
+    <div class="container">
+        <div id="home-view">
+            <header>
+                <div class="logo">
+                    <i class="fa-solid fa-file-pdf"></i>
+                    <span>PDF Editor</span>
+                </div>
+                <p class="subtitle">Streamline your document workflow with a sleek interactive UI</p>
+            </header>
+
+            <main class="action-grid">
+                <div class="action-card merge-card" id="mergeBtn">
+                    <div class="card-icon">
+                        <i class="fa-solid fa-object-group"></i>
+                    </div>
+                    <h2>MERGE PDF</h2>
+                    <p>Combine multiple PDFs into a single unified document seamlessly with blazing fast performance.</p>
+                    <div class="card-glow"></div>
+                </div>
+
+                <div class="action-card split-card" id="splitBtn">
+                    <div class="card-icon">
+                        <i class="fa-solid fa-scissors"></i>
+                    </div>
+                    <h2>SPLIT PDF</h2>
+                    <p>Extract pages or split a large PDF into multiple smaller files instantly with precise control.</p>
+                    <div class="card-glow"></div>
+                </div>
+
+                <div class="action-card converter-card" id="converterBtn">
+                    <div class="card-icon">
+                        <i class="fa-solid fa-file-export"></i>
+                    </div>
+                    <h2>FILE CONVERTER</h2>
+                    <p>Convert your documents between various formats quickly and securely without losing quality.</p>
+                    <div class="card-glow"></div>
+                </div>
+            </main>
+        </div>
+
+        <div id="merge-view" style="display: none;">
+            <header style="position: relative; width: 100%; display: flex; justify-content: center; align-items: center;">
+                <button id="backBtn" class="icon-btn" title="Back"><i class="fa-solid fa-arrow-left"></i></button>
+                <div class="header-content" style="text-align: center;">
+                    <div class="logo" style="font-size: 2.5rem; justify-content: center;">
+                        <i class="fa-solid fa-object-group"></i>
+                        <span>Merge PDF</span>
+                    </div>
+                    <p class="subtitle">Drag & Drop to rearrange your files before merging</p>
+                </div>
+            </header>
+
+            <main class="merge-workspace">
+                <div id="file-slots" class="file-slots-container">
+                    <!-- Slots will be injected by JS -->
+                </div>
+                <button id="mergeNowBtn" class="primary-btn mt-4"><i class="fa-solid fa-hand-sparkles"></i> Merge Now</button>
+            </main>
+        </div>
+
+        <div id="split-view" style="display: none; width: 100%;">
+            <header style="position: relative; width: 100%; display: flex; justify-content: center; align-items: center;">
+                <button id="splitBackBtn" class="icon-btn" title="Back"><i class="fa-solid fa-arrow-left"></i></button>
+                <div class="header-content" style="text-align: center;">
+                    <div class="logo" style="font-size: 2.5rem; justify-content: center;">
+                        <i class="fa-solid fa-scissors"></i>
+                        <span>Split PDF</span>
+                    </div>
+                    <p class="subtitle">Extract pages into multiple files easily</p>
+                </div>
+            </header>
+
+            <main class="split-workspace mt-4" style="width: 100%; max-width: 800px; display: flex; flex-direction: column; align-items: center; gap: 2rem;">
+                
+                <!-- Single File Upload Slot -->
+                <div id="split-file-slot" class="file-slot" style="width: 100%;">
+                    <!-- Populated by JS -->
+                </div>
+
+                <!-- Ranges Container -->
+                <div style="width: 100%; text-align: left; color: var(--text-secondary); font-weight: 300; margin-bottom: -1rem;">Page Ranges</div>
+                <div id="ranges-container" style="width: 100%; display: flex; flex-direction: column; gap: 1rem;">
+                    <!-- Ranges populated by JS -->
+                </div>
+
+                <!-- Actions -->
+                <div style="display: flex; flex-direction: column; gap: 1.5rem; align-items: center; width: 100%; margin-top: 1rem;">
+                    <label class="checkbox-container" style="display: flex; align-items: center; gap: 0.8rem; cursor: pointer; color: var(--text-primary); font-size: 1.1rem; background: var(--card-bg); padding: 1rem 2rem; border-radius: 12px; border: 1px solid var(--card-border); transition: all 0.3s;">
+                        <input type="checkbox" id="mergeInOnePdfBtn" style="width: 20px; height: 20px; cursor: pointer; accent-color: var(--secondary-accent);">
+                        <span>Merge in One PDF</span>
+                    </label>
+
+                    <button id="splitNowBtn" class="primary-btn" style="background: linear-gradient(135deg, #00cec9 0%, #6c5ce7 100%);"><i class="fa-solid fa-bolt"></i> Split Now</button>
+                </div>
+            </main>
+        </div>
+
+        <div id="converter-view" style="display: none; width: 100%;">
+            <header style="position: relative; width: 100%; display: flex; justify-content: center; align-items: center;">
+                <button id="converterBackBtn" class="icon-btn" title="Back"><i class="fa-solid fa-arrow-left"></i></button>
+                <div class="header-content" style="text-align: center;">
+                    <div class="logo" style="font-size: 2.5rem; justify-content: center;">
+                        <i class="fa-solid fa-file-export"></i>
+                        <span>File Converter</span>
+                    </div>
+                    <p class="subtitle">Convert documents easily</p>
+                </div>
+            </header>
+
+            <main class="converter-workspace mt-4" style="width: 100%; max-width: 800px; display: flex; flex-direction: column; align-items: center; gap: 2rem;">
+                
+                <!-- File Selection Area -->
+                <div class="converter-file-select" style="width: 100%;">
+                    <div id="convert-file-slot" class="file-slot" style="width: 100%;">
+                        <!-- Populated by JS -->
+                    </div>
+                </div>
+
+                <!-- Convert To Area -->
+                <div class="convert-to-section" style="width: 100%; display: flex; flex-direction: column; align-items: center; gap: 1rem;">
+                    <h3 style="color: var(--text-secondary); font-weight: 300; letter-spacing: 1px;">Convert to:</h3>
+                    
+                    <div class="wheels-wrapper" style="perspective: 1000px; margin-top: 6rem; margin-bottom: 6rem;">
+                        <div class="wheel-container">
+                            <div class="wheel" id="convert-wheel">
+                                <div class="wheel-item" data-val="WORD" style="--i:0;"><i class="fa-solid fa-file-word" style="color: #74b9ff; margin-right: 10px;"></i> WORD</div>
+                                <div class="wheel-item" data-val="EXCEL" style="--i:1;"><i class="fa-solid fa-file-excel" style="color: #55efc4; margin-right: 10px;"></i> EXCEL</div>
+                                <div class="wheel-item" data-val="PNG" style="--i:2;"><i class="fa-regular fa-image" style="color: #00cec9; margin-right: 10px;"></i> PNG</div>
+                                <div class="wheel-item" data-val="JPG" style="--i:3;"><i class="fa-solid fa-file-image" style="color: #a29bfe; margin-right: 10px;"></i> JPG</div>
+                                <div class="wheel-item" data-val="PDF" style="--i:4;"><i class="fa-solid fa-file-pdf" style="color: #ff758c; margin-right: 10px;"></i> PDF</div>
+                                <div class="wheel-item" data-val="PPT" style="--i:5;"><i class="fa-solid fa-file-powerpoint" style="color: #fab1a0; margin-right: 10px;"></i> PPT</div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="convert-action pb-4" style="margin-top: 1rem; text-align: center;">
+                    <button id="convertNowBtn" class="primary-btn" style="background: linear-gradient(135deg, #e84393 0%, #0984e3 100%);"><i class="fa-solid fa-bolt"></i> Convert Now</button>
+                    <p style="text-align: center; color: var(--text-secondary); font-size: 0.9rem; margin-top: 1rem;">(Converter functionality is prototype only)</p>
+                </div>
+            </main>
+        </div>
+        
+        <footer>
+            <p>Secure, fast, and completely interactive PDF processing.</p>
+        </footer>
+    </div>
+
+    <script src="https://unpkg.com/pdf-lib@1.17.1/dist/pdf-lib.min.js"></script>
+    <script src="script.js?v=2"></script>
+</body>
+</html>
